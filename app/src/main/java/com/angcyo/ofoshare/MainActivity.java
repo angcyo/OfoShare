@@ -5,10 +5,8 @@ import android.content.Context;
 import android.os.Environment;
 import android.view.View;
 
-import com.angcyo.bmob.DeviceBmob;
 import com.angcyo.bmob.UpdateBmob;
 import com.angcyo.library.utils.L;
-import com.angcyo.ofoshare.uiview.MainUIView;
 import com.angcyo.ofoshare.uiview.RegisterUIView;
 import com.angcyo.ofoshare.util.Main;
 import com.angcyo.uiview.base.UILayoutActivity;
@@ -44,8 +42,9 @@ public class MainActivity extends UILayoutActivity {
         SkinHelper.setSkin(new MainSkin(this));
 
         if (Main.isRegister()) {
-            DeviceBmob.upload(Main.userName());
-            mLayout.replaceIView(new MainUIView(), new UIParam(false));
+            //DeviceBmob.upload(Main.userName());
+            //mLayout.replaceIView(new MainUIView(), new UIParam(false));
+            mLayout.replaceIView(new RegisterUIView(), new UIParam(false));
         } else {
             mLayout.replaceIView(new RegisterUIView(), new UIParam(false));
         }

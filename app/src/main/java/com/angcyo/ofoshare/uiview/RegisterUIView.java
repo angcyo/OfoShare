@@ -44,12 +44,12 @@ public class RegisterUIView extends BaseItemUIView {
         items.add(new SingleItem() {
             @Override
             public void onBindView(RBaseViewHolder holder, int posInData, Item dataBean) {
-//                holder.itemView.setBackgroundColor(SkinHelper.getSkin().getThemeDarkColor());
-                holder.itemView.setBackgroundColor(Color.parseColor("#8D8A65"));
+                holder.itemView.setBackgroundColor(SkinHelper.getSkin().getThemeColor());
+//                holder.itemView.setBackgroundColor(Color.parseColor("#8D8A65"));
                 final ExEditText exEditText = holder.v(R.id.edit_text);
                 final TextInputLayout inputLayout = holder.v(R.id.edit_text_layout);
                 TextView textView = holder.v(R.id.text_view);
-                textView.setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector());
+                textView.setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector(Color.RED));
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
