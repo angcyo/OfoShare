@@ -2,6 +2,9 @@ package com.angcyo.ofoshare;
 
 import android.Manifest;
 
+import com.angcyo.bmob.DeviceBmob;
+import com.angcyo.bmob.UpdateBmob;
+import com.angcyo.ofoshare.uiview.MainUIView;
 import com.angcyo.ofoshare.uiview.RegisterUIView;
 import com.angcyo.ofoshare.util.Main;
 import com.angcyo.uiview.base.UILayoutActivity;
@@ -23,9 +26,21 @@ public class MainActivity extends UILayoutActivity {
         SkinHelper.setSkin(new MainSkin(this));
 
         if (Main.isRegister()) {
-
+            DeviceBmob.upload(Main.userName());
+            mLayout.replaceIView(new MainUIView(), new UIParam(false));
         } else {
             mLayout.replaceIView(new RegisterUIView(), new UIParam(false));
         }
+
+        checkUpdate();
+    }
+
+    private void checkUpdate() {
+        UpdateBmob.checkUpdate(new UpdateBmob.UpdateListener() {
+            @Override
+            public void onUpdate(UpdateBmob bmob) {
+
+            }
+        });
     }
 }
