@@ -1,6 +1,5 @@
 package com.angcyo.bmob;
 
-import com.angcyo.library.utils.L;
 import com.angcyo.uiview.utils.Device;
 
 import cn.bmob.v3.BmobObject;
@@ -39,7 +38,9 @@ public class DeviceBmob extends BmobObject {
         new DeviceBmob().setUserName(userName).save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
-                L.e("done() -> " + s + "\n" + e.getMessage());
+                if (e == null) {
+
+                }
             }
         });
     }
