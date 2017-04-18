@@ -47,6 +47,15 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/share_path"/>
         </provider>
+
+        <!--网络状态监听-->
+        <receiver
+            android:name="com.angcyo.uiview.receiver.NetworkStateReceiver"
+            android:label="NetworkStateReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

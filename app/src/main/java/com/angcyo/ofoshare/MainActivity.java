@@ -1,8 +1,10 @@
 package com.angcyo.ofoshare;
 
 import android.Manifest;
-import android.content.Context;
+import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.angcyo.bmob.DeviceBmob;
@@ -15,8 +17,13 @@ import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.dialog.UIDialog;
 import com.angcyo.uiview.github.utilcode.utils.AppUtils;
+import com.angcyo.uiview.github.utilcode.utils.NetworkUtils;
 import com.angcyo.uiview.net.Rx;
+import com.angcyo.uiview.receiver.NetworkStateReceiver;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.hwangjr.rxbus.RxBus;
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
 
 import java.io.File;
 
@@ -27,9 +34,7 @@ import zlc.season.rxdownload.entity.DownloadStatus;
 
 public class MainActivity extends UILayoutActivity {
 
-    public static void installApp(Context context, File file) {
-        //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-    }
+    boolean isChecking = false;
 
     @Override
     protected String[] needPermissions() {
@@ -37,6 +42,23 @@ public class MainActivity extends UILayoutActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_PHONE_STATE
         };
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        RxBus.get().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxBus.get().unregister(this);
+    }
+
+    @Subscribe(tags = {@Tag("update")})
+    public void onEvent(String update) {
+        checkUpdate();
     }
 
     @Override
@@ -57,10 +79,24 @@ public class MainActivity extends UILayoutActivity {
     private void checkUpdate() {
         //UpdateBmob.test();
 
+        if (NetworkStateReceiver.getNetType() != NetworkUtils.NetworkType.NETWORK_WIFI) {
+            return;
+        }
+
+        if (isChecking) {
+            return;
+        }
+
+        isChecking = true;
         UpdateBmob.checkUpdate(new UpdateBmob.UpdateListener() {
             @Override
             public void onUpdate(final UpdateBmob bmob) {
                 L.e("onUpdate() -> 有更新:" + bmob.getUrl());
+                if (BuildConfig.DEBUG) {
+                    showInstallDialog(bmob, null);
+                    return;
+                }
+
                 RxDownload.getInstance()
                         .download(bmob.getUrl(), "ofoshare.apk",
                                 Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare")
@@ -74,20 +110,7 @@ public class MainActivity extends UILayoutActivity {
                                 //L.e("call() -> " + filePath + " " + file.exists());
 
                                 if (file.exists()) {
-                                    final UIDialog dialog = UIDialog.build();
-                                    dialog.setDialogTitle("发现新版本:" + bmob.getVersionName())
-                                            .setDialogContent(bmob.getDescribe())
-                                            .setCancelText(bmob.getForce() == 1 ? "" : "下次再说")
-                                            .setOkText("立即安装")
-                                            .setOkListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    dialog.setCanCancel(true);
-                                                    AppUtils.installApp(MainActivity.this, file);
-                                                }
-                                            })
-                                            .setCanCancel(bmob.getForce() != 1)
-                                            .showDialog(mLayout);
+                                    showInstallDialog(bmob, file);
                                 }
                             }
                         })
@@ -104,5 +127,34 @@ public class MainActivity extends UILayoutActivity {
                         });
             }
         });
+    }
+
+    private void showInstallDialog(UpdateBmob bmob, final File file) {
+        final UIDialog dialog = UIDialog.build();
+
+        StringBuilder builder = new StringBuilder();
+        String describe = bmob.getDescribe();
+        if (!TextUtils.isEmpty(describe)) {
+            String[] split = describe.split("\\\\n");
+            for (int i = 0; i < 1; i++) {
+                for (String s : split) {
+                    builder.append(s.trim());
+                    builder.append("\n");
+                }
+            }
+        }
+        dialog.setDialogTitle("发现新版本:" + bmob.getVersionName())
+                .setDialogContent(builder.toString())
+                .setCancelText(bmob.getForce() == 1 ? "" : "下次再说")
+                .setOkText("立即安装")
+                .setOkListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.setCanCancel(true);
+                        AppUtils.installApp(MainActivity.this, file);
+                    }
+                })
+                .setCanCancel(bmob.getForce() != 1)
+                .showDialog(mLayout);
     }
 }

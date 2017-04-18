@@ -1,2 +1,2 @@
 include ':app', ':bmob'
-include ':RLibrary:uiview', ':RLibrary:library', ':RLibrary:zxing', ':RLibrary:qrcodecore'
+include ':RLibrary:uiview', ':RLibrary:library', ':RLibrary:zxing', ':RLibrary:qrcodecore', ':RLibrary:rcode'

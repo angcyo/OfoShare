@@ -1,5 +1,6 @@
 package com.angcyo.ofoshare.uiview;
 
+import android.Manifest;
 import android.graphics.Color;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
@@ -15,10 +16,14 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Device;
+import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.utils.TimeUtil;
 import com.angcyo.uiview.widget.ExEditText;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
+
+import rx.functions.Action1;
 
 /**
  * Created by angcyo on 2017-04-17.
@@ -94,6 +99,29 @@ public class MainUIView extends BaseItemUIView {
                                 }
                             });
                         }
+                    }
+                });
+
+                holder.v(R.id.san_view).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new RxPermissions(mActivity)
+                                .request(Manifest.permission.CAMERA)
+                                .subscribe(new Action1<Boolean>() {
+                                    @Override
+                                    public void call(Boolean aBoolean) {
+                                        if (aBoolean) {
+                                            startIView(new RScanUIView(new Action1<String>() {
+                                                @Override
+                                                public void call(String s) {
+                                                    exEditText.setText(s);
+                                                }
+                                            }));
+                                        } else {
+                                            T_.error("哟,难道要我用特意功能扫一扫?");
+                                        }
+                                    }
+                                });
                     }
                 });
             }
