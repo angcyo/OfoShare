@@ -40,7 +40,7 @@ android {
     }
     getApplicationVariants().all { variant ->
         variant.outputs.each { output ->
-            def appName = "OfoShare-${variant.buildType.name}-${variant.versionName}.apk"
+            def appName = "Ofo密码共享-${variant.buildType.name}-${variant.versionName}.apk"
             output.outputFile = new File(output.outputFile.parent, appName)
         }
     }

@@ -4,15 +4,18 @@ import android.graphics.Color;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
 
+import com.angcyo.bmob.PasswordBmob;
 import com.angcyo.ofoshare.R;
 import com.angcyo.ofoshare.util.Main;
 import com.angcyo.uiview.base.Item;
 import com.angcyo.uiview.base.SingleItem;
 import com.angcyo.uiview.dialog.UILoading;
+import com.angcyo.uiview.github.utilcode.utils.SpannableStringUtils;
 import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Device;
+import com.angcyo.uiview.utils.TimeUtil;
 import com.angcyo.uiview.widget.ExEditText;
 
 import java.util.List;
@@ -41,7 +44,7 @@ public class MainUIView extends BaseItemUIView {
     protected void createItems(List<SingleItem> items) {
         items.add(new SingleItem() {
             @Override
-            public void onBindView(RBaseViewHolder holder, int posInData, Item dataBean) {
+            public void onBindView(final RBaseViewHolder holder, int posInData, Item dataBean) {
                 holder.tv(R.id.version_name_view).setText(Device.appVersionName(mActivity));
 
                 final TextInputLayout inputLayout = holder.v(R.id.edit_text_layout);
@@ -57,7 +60,7 @@ public class MainUIView extends BaseItemUIView {
                             exEditText.requestFocus();
                             inputLayout.setError("认真一点.");
                         } else {
-
+                            startIView(new AddDialog(exEditText.string()));
                         }
                     }
                 });
@@ -68,7 +71,28 @@ public class MainUIView extends BaseItemUIView {
                             exEditText.requestFocus();
                             inputLayout.setError("臣妾做不到啊.");
                         } else {
+                            holder.tv(R.id.result_view).setText("查询中:" + TimeUtil.getBeijingNowTime("HH:mm:ss:SSS"));
                             UILoading.show2(mILayout);
+                            PasswordBmob.find(exEditText.string(), new PasswordBmob.FindListener() {
+                                @Override
+                                public void onFind(List<String> passwords) {
+                                    UILoading.hide();
+                                    if (passwords.isEmpty()) {
+                                        holder.tv(R.id.result_view).setText("没有找到 " + exEditText.string() + " 相关的密码, 赶快去共享吧!");
+                                    } else {
+                                        SpannableStringUtils.Builder builder = SpannableStringUtils.getBuilder(
+                                                "找到" + exEditText.string() + "的结果" + passwords.size() + "个:\n");
+
+                                        for (int i = 0; i < 1; i++) {
+                                            for (String s : passwords) {
+                                                builder.append(s).setTextSize((int) (scaledDensity() * 14));
+                                                builder.append("\n");
+                                            }
+                                        }
+                                        holder.tv(R.id.result_view).setText(builder.create());
+                                    }
+                                }
+                            });
                         }
                     }
                 });

@@ -24,7 +24,7 @@
             android:id="@+id/edit_text_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/base_xhdpi">
+            android:layout_marginTop="@dimen/base_xxxhdpi">
 
             <com.angcyo.uiview.widget.ExEditText
                 android:id="@+id/edit_text"
@@ -42,6 +42,7 @@
             android:id="@+id/add_view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_button_height"
+            android:layout_marginTop="@dimen/base_xxhdpi"
             android:gravity="center"
             android:text="我要共享密码"
             android:textColor="@color/default_base_white"/>
@@ -50,9 +51,16 @@
             android:id="@+id/find_view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_button_height"
-            android:layout_marginTop="@dimen/base_xxhdpi"
+            android:layout_marginTop="@dimen/base_xhdpi"
             android:gravity="center"
             android:text="查询共享密码"
+            android:textColor="@color/default_base_white"/>
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/result_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_xhdpi"
             android:textColor="@color/default_base_white"/>
 
     </LinearLayout>
