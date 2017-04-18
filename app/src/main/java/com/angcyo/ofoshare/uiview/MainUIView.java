@@ -18,13 +18,17 @@ import com.angcyo.uiview.model.TitleBarPattern;
 import com.angcyo.uiview.recycler.RBaseViewHolder;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.Device;
+import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.utils.TimeUtil;
 import com.angcyo.uiview.widget.ExEditText;
+import com.angcyo.uiview.widget.RTextView;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import rx.functions.Action1;
 
 /**
@@ -34,6 +38,7 @@ import rx.functions.Action1;
 public class MainUIView extends BaseItemUIView {
     public static int MAX_NUM_LENGTH = 4;//编号限制最小长度
     private TextView mVersionNameView;
+    private RTextView mDataCountView;
 
     @Override
     protected TitleBarPattern getTitleBar() {
@@ -58,6 +63,8 @@ public class MainUIView extends BaseItemUIView {
             public void onBindView(final RBaseViewHolder holder, int posInData, Item dataBean) {
                 mVersionNameView = holder.tv(R.id.version_name_view);
                 mVersionNameView.setText(Device.appVersionName(mActivity));
+
+                mDataCountView = holder.v(R.id.data_count_view);
 
                 final TextInputLayout inputLayout = holder.v(R.id.edit_text_layout);
                 final ExEditText exEditText = holder.v(R.id.edit_text);
@@ -150,6 +157,17 @@ public class MainUIView extends BaseItemUIView {
                     return;
                 }
                 mVersionNameView.setText(Device.appVersionName(mActivity) + " 服务器版本:" + bmob.getVersionName());
+            }
+        });
+
+        PasswordBmob.find(new FindListener<PasswordBmob>() {
+            @Override
+            public void done(List<PasswordBmob> list, BmobException e) {
+                if (e == null) {
+                    if (mDataCountView != null) {
+                        mDataCountView.setText(RUtils.getShortString(list.size()) + "条");
+                    }
+                }
             }
         });
     }

@@ -22,11 +22,17 @@
         android:padding="@dimen/base_xxhdpi"
         tools:background="@color/base_orange">
 
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/data_count_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="服务器可用数据量:%1$s"
+            android:textColor="@color/default_base_white"/>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/base_xxxhdpi">
-
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/edit_text_layout"

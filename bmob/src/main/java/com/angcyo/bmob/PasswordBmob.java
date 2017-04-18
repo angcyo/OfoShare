@@ -59,6 +59,11 @@ public class PasswordBmob extends BmobObject {
                 });
     }
 
+    public static void find(final cn.bmob.v3.listener.FindListener<PasswordBmob> listener) {
+        BmobQuery<PasswordBmob> query = new BmobQuery<>();
+        query.findObjects(listener);
+    }
+
     public String getPassword() {
         return password;
     }
