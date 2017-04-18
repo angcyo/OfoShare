@@ -26,6 +26,8 @@ import com.angcyo.uiview.widget.RTextView;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
@@ -128,7 +130,13 @@ public class MainUIView extends BaseItemUIView {
                                             startIView(new RScanUIView(new Action1<String>() {
                                                 @Override
                                                 public void call(String s) {
-                                                    exEditText.setText(s);
+                                                    Pattern compile = Pattern.compile("\\d{4,}");
+                                                    Matcher matcher = compile.matcher(s);
+                                                    if (matcher.find()) {
+                                                        exEditText.setText(matcher.group(matcher.groupCount()));
+                                                    } else {
+                                                        exEditText.setText(s);
+                                                    }
                                                 }
                                             }));
                                         } else {
@@ -145,6 +153,15 @@ public class MainUIView extends BaseItemUIView {
     @Override
     protected void initOnShowContentLayout() {
         super.initOnShowContentLayout();
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetchData();
+            }
+        }, 500);
+    }
+
+    private void fetchData() {
         UpdateBmob.checkUpdate(new UpdateBmob.UpdateListener() {
             @Override
             public void onUpdate(UpdateBmob bmob) {
