@@ -182,7 +182,12 @@ public class MainUIView extends BaseItemUIView {
             public void done(List<PasswordBmob> list, BmobException e) {
                 if (e == null) {
                     if (mDataCountView != null) {
-                        mDataCountView.setText(RUtils.getShortString(list.size()) + "条");
+                        if (list.isEmpty()) {
+                            mDataCountView.setText("服务器暂时0数据.");
+                        } else {
+                            mDataCountView.setText(RUtils.getShortString(list.size()) + "条 last by:" + list.get(list.size() - 1).getUsername());
+                        }
+
                     }
                 }
             }
