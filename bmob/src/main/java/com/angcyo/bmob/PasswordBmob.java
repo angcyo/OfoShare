@@ -48,7 +48,10 @@ public class PasswordBmob extends BmobObject {
                         if (e == null) {
                             Collections.reverse(list);//逆序
                             for (PasswordBmob bmob : list) {
-                                strings.add(bmob.getPassword());
+                                if (strings.contains(bmob.getPassword())) {
+                                } else {
+                                    strings.add(bmob.getPassword());
+                                }
                             }
                         }
                         listener.onFind(strings);

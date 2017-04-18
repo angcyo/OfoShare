@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:hint="小黄车编号:"
                     android:inputType="number"
-                    android:maxLength="8"
+                    android:maxLength="20"
                     android:maxLines="1"
                     android:paddingEnd="@dimen/base_40dpi"
                     android:textColor="@color/default_base_white"/>
@@ -50,8 +50,8 @@
                 android:id="@+id/san_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginTop="@dimen/base_ldpi"
+                android:layout_gravity="end"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/base_bg2_selector"
                 android:padding="@dimen/base_xhdpi"
                 android:src="@drawable/base_san_ico"/>

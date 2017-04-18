@@ -126,6 +126,11 @@ public class MainActivity extends UILayoutActivity {
                             }
                         });
             }
+
+            @Override
+            public void onLast(UpdateBmob bmob) {
+
+            }
         });
     }
 

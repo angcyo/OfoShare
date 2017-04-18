@@ -8,4 +8,9 @@ import com.angcyo.uiview.base.UIItemUIView;
  */
 
 public abstract class BaseItemUIView extends UIItemUIView<SingleItem> {
+    @Override
+    public void onViewLoad() {
+        super.onViewLoad();
+        mSoftInputLayout.setEnabled(false);
+    }
 }

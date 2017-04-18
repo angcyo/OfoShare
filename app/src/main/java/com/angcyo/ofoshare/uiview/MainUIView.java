@@ -4,8 +4,10 @@ import android.Manifest;
 import android.graphics.Color;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
+import android.widget.TextView;
 
 import com.angcyo.bmob.PasswordBmob;
+import com.angcyo.bmob.UpdateBmob;
 import com.angcyo.ofoshare.R;
 import com.angcyo.ofoshare.util.Main;
 import com.angcyo.uiview.base.Item;
@@ -30,6 +32,9 @@ import rx.functions.Action1;
  */
 
 public class MainUIView extends BaseItemUIView {
+    public static int MAX_NUM_LENGTH = 4;//编号限制最小长度
+    private TextView mVersionNameView;
+
     @Override
     protected TitleBarPattern getTitleBar() {
         return super.getTitleBar().setShowBackImageView(false).setTitleString("Ofo Share : " + Main.userName());
@@ -48,9 +53,11 @@ public class MainUIView extends BaseItemUIView {
     @Override
     protected void createItems(List<SingleItem> items) {
         items.add(new SingleItem() {
+
             @Override
             public void onBindView(final RBaseViewHolder holder, int posInData, Item dataBean) {
-                holder.tv(R.id.version_name_view).setText(Device.appVersionName(mActivity));
+                mVersionNameView = holder.tv(R.id.version_name_view);
+                mVersionNameView.setText(Device.appVersionName(mActivity));
 
                 final TextInputLayout inputLayout = holder.v(R.id.edit_text_layout);
                 final ExEditText exEditText = holder.v(R.id.edit_text);
@@ -61,7 +68,7 @@ public class MainUIView extends BaseItemUIView {
                 holder.v(R.id.add_view).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (exEditText.isEmpty() || exEditText.length() < 7) {
+                        if (exEditText.isEmpty() || exEditText.length() < MAX_NUM_LENGTH) {
                             exEditText.requestFocus();
                             inputLayout.setError("认真一点.");
                         } else {
@@ -72,7 +79,7 @@ public class MainUIView extends BaseItemUIView {
                 holder.v(R.id.find_view).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (exEditText.isEmpty() || exEditText.length() < 7) {
+                        if (exEditText.isEmpty() || exEditText.length() < MAX_NUM_LENGTH) {
                             exEditText.requestFocus();
                             inputLayout.setError("臣妾做不到啊.");
                         } else {
@@ -124,6 +131,25 @@ public class MainUIView extends BaseItemUIView {
                                 });
                     }
                 });
+            }
+        });
+    }
+
+    @Override
+    protected void initOnShowContentLayout() {
+        super.initOnShowContentLayout();
+        UpdateBmob.checkUpdate(new UpdateBmob.UpdateListener() {
+            @Override
+            public void onUpdate(UpdateBmob bmob) {
+
+            }
+
+            @Override
+            public void onLast(UpdateBmob bmob) {
+                if (mVersionNameView == null) {
+                    return;
+                }
+                mVersionNameView.setText(Device.appVersionName(mActivity) + " 服务器版本:" + bmob.getVersionName());
             }
         });
     }

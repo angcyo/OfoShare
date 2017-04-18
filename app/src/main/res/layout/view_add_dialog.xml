@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:hint="小黄车密码:"
                 android:inputType="number"
-                android:maxLength="6"
+                android:maxLength="20"
                 android:maxLines="1"
                 android:textColor="@color/default_base_white"/>
 

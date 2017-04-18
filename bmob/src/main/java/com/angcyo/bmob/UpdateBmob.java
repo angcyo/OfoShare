@@ -49,6 +49,7 @@ public class UpdateBmob extends BmobObject {
                 if (e == null) {
                     if (list.size() > 0) {
                         UpdateBmob updateBmob = list.get(list.size() - 1);
+                        listener.onLast(updateBmob);
                         try {
                             if (updateBmob.getVersionCode() > Integer.valueOf(Device.appVersionCode(RBmob.context))) {
                                 listener.onUpdate(updateBmob);
@@ -104,5 +105,7 @@ public class UpdateBmob extends BmobObject {
 
     public interface UpdateListener {
         void onUpdate(UpdateBmob bmob);
+
+        void onLast(UpdateBmob bmob);
     }
 }
