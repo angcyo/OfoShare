@@ -44,6 +44,8 @@ public class MainUIView extends BaseItemUIView {
     public static int MAX_NUM_LENGTH = 4;//编号限制最小长度
     private TextView mVersionNameView;
     private RTextView mDataCountView;
+    private String mLastBy;
+    private String mUserName;
 
     @Override
     protected TitleBarPattern getTitleBar() {
@@ -178,21 +180,25 @@ public class MainUIView extends BaseItemUIView {
             public void done(List<PasswordBmob> list, BmobException e) {
                 if (e == null) {
                     final int size = list.size();
-                    String username = "";
+                    mLastBy = "";
                     if (size > 0) {
-                        username = list.get(list.size() - 1).getUsername();
+                        mLastBy = list.get(list.size() - 1).getUsername();
                     }
 
-                    final String finalUsername = username;
                     UserBmob.find(new FindListener<UserBmob>() {
                         @Override
                         public void done(List<UserBmob> list, BmobException e) {
                             if (e == null) {
                                 int size1 = list.size();
+                                mUserName = "";
+                                if (size > 0) {
+                                    mUserName = list.get(list.size() - 1).getUserName();
+                                }
+
                                 if (mDataCountView != null) {
-                                    mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s LastBy:%s",
+                                    mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s LastBy:%s Un:%s",
                                             RUtils.getShortString(size), RUtils.getShortString(size1),
-                                            finalUsername));
+                                            mLastBy, mUserName));
                                 }
                             }
                         }

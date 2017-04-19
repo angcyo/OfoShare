@@ -15,6 +15,10 @@ public class UserBmob extends BmobObject {
     public UserBmob() {
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
     public static void isUserExist(String userName, FindListener listener) {
         BmobQuery<UserBmob> bmobQuery = new BmobQuery<>();
         bmobQuery.addWhereEqualTo("userName", userName).findObjects(listener);
