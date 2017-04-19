@@ -96,10 +96,16 @@ public class MainActivity extends UILayoutActivity {
 //                    showInstallDialog(bmob, null);
 //                    return;
 //                }
+                File file = new File(getFolder() + getFileName(bmob.getVersionName()));
+
+                if (file.exists()) {
+                    AppUtils.installApp(MainActivity.this, file);
+                    isChecking = false;
+                    return;
+                }
 
                 RxDownload.getInstance()
-                        .download(bmob.getUrl(), "ofoshare.apk",
-                                Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare")
+                        .download(bmob.getUrl(), getFileName(bmob.getVersionName()), getFolder())
                         .compose(Rx.<DownloadStatus>transformer())
                         .last()
                         .doOnCompleted(new Action0() {
@@ -112,6 +118,8 @@ public class MainActivity extends UILayoutActivity {
                                 if (file.exists()) {
                                     showInstallDialog(bmob, file);
                                 }
+
+                                isChecking = false;
                             }
                         })
                         .subscribe(new Action1<DownloadStatus>() {
@@ -125,6 +133,7 @@ public class MainActivity extends UILayoutActivity {
                                 throwable.printStackTrace();
                             }
                         });
+
             }
 
             @Override
@@ -132,6 +141,14 @@ public class MainActivity extends UILayoutActivity {
 
             }
         });
+    }
+
+    private String getFolder() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare/";
+    }
+
+    private String getFileName(String versionName) {
+        return "ofoshare" + versionName + ".apk";
     }
 
     private void showInstallDialog(UpdateBmob bmob, final File file) {
