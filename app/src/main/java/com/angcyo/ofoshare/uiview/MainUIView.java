@@ -67,7 +67,7 @@ public class MainUIView extends BaseItemUIView {
             @Override
             public void onBindView(final RBaseViewHolder holder, int posInData, Item dataBean) {
                 mVersionNameView = holder.tv(R.id.version_name_view);
-                mVersionNameView.setText(Device.appVersionName(mActivity));
+                mVersionNameView.setText("Cv:" + Device.appVersionName(mActivity));
 
                 mDataCountView = holder.v(R.id.data_count_view);
 
@@ -168,7 +168,7 @@ public class MainUIView extends BaseItemUIView {
                 if (mVersionNameView == null) {
                     return;
                 }
-                mVersionNameView.setText(Device.appVersionName(mActivity) + " 服务器版本:" + bmob.getVersionName());
+                mVersionNameView.setText(String.format(Locale.CHINA, "Cv:%s Rv:%s", Device.appVersionName(mActivity), bmob.getVersionName()));
             }
         });
 
