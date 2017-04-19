@@ -168,7 +168,8 @@ public class MainUIView extends BaseItemUIView {
                 if (mVersionNameView == null) {
                     return;
                 }
-                mVersionNameView.setText(String.format(Locale.CHINA, "Cv:%s Rv:%s", Device.appVersionName(mActivity), bmob.getVersionName()));
+                mVersionNameView.setText(String.format(Locale.CHINA, "Cv:%s Rv:%s",
+                        Device.appVersionName(mActivity), bmob.getVersionName()));
             }
         });
 
@@ -177,15 +178,21 @@ public class MainUIView extends BaseItemUIView {
             public void done(List<PasswordBmob> list, BmobException e) {
                 if (e == null) {
                     final int size = list.size();
+                    String username = "";
+                    if (size > 0) {
+                        username = list.get(list.size() - 1).getUsername();
+                    }
 
+                    final String finalUsername = username;
                     UserBmob.find(new FindListener<UserBmob>() {
                         @Override
                         public void done(List<UserBmob> list, BmobException e) {
                             if (e == null) {
                                 int size1 = list.size();
                                 if (mDataCountView != null) {
-                                    mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s",
-                                            RUtils.getShortString(size), RUtils.getShortString(size1)));
+                                    mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s LastBy:%s",
+                                            RUtils.getShortString(size), RUtils.getShortString(size1),
+                                            finalUsername));
                                 }
                             }
                         }
