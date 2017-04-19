@@ -24,6 +24,11 @@ public class UserBmob extends BmobObject {
         new UserBmob().setUserName(userName).save(listener);
     }
 
+    public static void find(final cn.bmob.v3.listener.FindListener<UserBmob> listener) {
+        BmobQuery<UserBmob> query = new BmobQuery<>();
+        query.findObjects(listener);
+    }
+
     public UserBmob setUserName(String userName) {
         this.userName = userName;
         return this;

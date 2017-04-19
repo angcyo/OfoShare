@@ -2,12 +2,14 @@ package com.angcyo.ofoshare.uiview;
 
 import android.Manifest;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.widget.TextView;
 
 import com.angcyo.bmob.PasswordBmob;
 import com.angcyo.bmob.UpdateBmob;
+import com.angcyo.bmob.UserBmob;
 import com.angcyo.ofoshare.R;
 import com.angcyo.ofoshare.util.Main;
 import com.angcyo.uiview.base.Item;
@@ -26,6 +28,7 @@ import com.angcyo.uiview.widget.RTextView;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -150,18 +153,10 @@ public class MainUIView extends BaseItemUIView {
         });
     }
 
-    @Override
-    protected void initOnShowContentLayout() {
-        super.initOnShowContentLayout();
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fetchData();
-            }
-        }, 500);
-    }
 
-    private void fetchData() {
+    public void onViewShow(Bundle bundle) {
+        super.onViewShow(bundle);
+
         UpdateBmob.checkUpdate(new UpdateBmob.UpdateListener() {
             @Override
             public void onUpdate(UpdateBmob bmob) {
@@ -181,14 +176,20 @@ public class MainUIView extends BaseItemUIView {
             @Override
             public void done(List<PasswordBmob> list, BmobException e) {
                 if (e == null) {
-                    if (mDataCountView != null) {
-                        if (list.isEmpty()) {
-                            mDataCountView.setText("服务器暂时0数据.");
-                        } else {
-                            mDataCountView.setText(RUtils.getShortString(list.size()) + "条 last by:" + list.get(list.size() - 1).getUsername());
-                        }
+                    final int size = list.size();
 
-                    }
+                    UserBmob.find(new FindListener<UserBmob>() {
+                        @Override
+                        public void done(List<UserBmob> list, BmobException e) {
+                            if (e == null) {
+                                int size1 = list.size();
+                                if (mDataCountView != null) {
+                                    mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s",
+                                            RUtils.getShortString(size), RUtils.getShortString(size1)));
+                                }
+                            }
+                        }
+                    });
                 }
             }
         });

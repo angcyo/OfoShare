@@ -92,10 +92,10 @@ public class MainActivity extends UILayoutActivity {
             @Override
             public void onUpdate(final UpdateBmob bmob) {
                 L.e("onUpdate() -> 有更新:" + bmob.getUrl());
-                if (BuildConfig.DEBUG) {
-                    showInstallDialog(bmob, null);
-                    return;
-                }
+//                if (BuildConfig.DEBUG) {
+//                    showInstallDialog(bmob, null);
+//                    return;
+//                }
 
                 RxDownload.getInstance()
                         .download(bmob.getUrl(), "ofoshare.apk",
