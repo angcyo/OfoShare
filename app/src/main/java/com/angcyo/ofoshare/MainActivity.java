@@ -96,22 +96,23 @@ public class MainActivity extends UILayoutActivity {
 //                    showInstallDialog(bmob, null);
 //                    return;
 //                }
-                File file = new File(getFolder() + getFileName(bmob.getVersionName()));
+                final String fileName = getFileName(bmob.getVersionName());
+                File file = new File(getFolder() + fileName);
 
                 if (file.exists()) {
-                    AppUtils.installApp(MainActivity.this, file);
+                    showInstallDialog(bmob, file);
                     isChecking = false;
                     return;
                 }
 
                 RxDownload.getInstance()
-                        .download(bmob.getUrl(), getFileName(bmob.getVersionName()), getFolder())
+                        .download(bmob.getUrl(), fileName, getFolder())
                         .compose(Rx.<DownloadStatus>transformer())
                         .last()
                         .doOnCompleted(new Action0() {
                             @Override
                             public void call() {
-                                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare/ofoshare.apk";
+                                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare/" + fileName;
                                 final File file = new File(filePath);
                                 //L.e("call() -> " + filePath + " " + file.exists());
 
