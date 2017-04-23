@@ -173,7 +173,6 @@ public class MainActivity extends UILayoutActivity {
                 .setOkListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.setCanCancel(true);
                         AppUtils.installApp(MainActivity.this, file);
                     }
                 })
