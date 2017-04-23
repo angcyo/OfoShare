@@ -151,6 +151,13 @@ public class MainUIView extends BaseItemUIView {
                                 });
                     }
                 });
+
+                holder.v(R.id.about_view).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startIView(new AboutUIView(v));
+                    }
+                });
             }
         });
     }

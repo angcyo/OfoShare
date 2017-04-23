@@ -5,14 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.angcyo.uiview.widget.RTextView
-        android:id="@+id/version_name_view"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/base_xhdpi"
-        android:textColor="@color/default_base_white"/>
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/base_xhdpi">
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/about_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/base_bg_selector"
+            android:text="鸣谢/关于"
+            android:textColor="@color/default_base_white"/>
+
+        <com.angcyo.uiview.widget.RTextView
+            android:id="@+id/version_name_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/default_base_white"
+            android:textSize="@dimen/default_text_size9"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
