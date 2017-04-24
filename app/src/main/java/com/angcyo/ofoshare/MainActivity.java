@@ -106,18 +106,21 @@ public class MainActivity extends UILayoutActivity {
                 }
 
                 RxDownload.getInstance()
-                        .download(bmob.getUrl(), fileName, getFolder())
+                        .download(bmob.getUrl(), fileName + ".temp", getFolder())
                         .compose(Rx.<DownloadStatus>transformer())
                         .last()
                         .doOnCompleted(new Action0() {
                             @Override
                             public void call() {
-                                String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare/" + fileName;
+                                File targetFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare/" + fileName);
+                                String filePath = targetFile.getAbsolutePath() + ".temp";
                                 final File file = new File(filePath);
                                 //L.e("call() -> " + filePath + " " + file.exists());
 
                                 if (file.exists()) {
-                                    showInstallDialog(bmob, file);
+                                    if (file.renameTo(targetFile)) {
+                                        showInstallDialog(bmob, targetFile);
+                                    }
                                 }
 
                                 isChecking = false;
