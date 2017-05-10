@@ -43,12 +43,13 @@ public class UpdateBmob extends BmobObject {
 
     public static void checkUpdate(final UpdateListener listener) {
         BmobQuery<UpdateBmob> query = new BmobQuery<>();
+        query.order("-createdAt");//-表示逆序
         query.findObjects(new FindListener<UpdateBmob>() {
             @Override
             public void done(List<UpdateBmob> list, BmobException e) {
                 if (e == null) {
-                    if (list.size() > 0) {
-                        UpdateBmob updateBmob = list.get(list.size() - 1);
+                    if (!list.isEmpty()) {
+                        UpdateBmob updateBmob = list.get(0);
                         listener.onLast(updateBmob);
                         try {
                             if (updateBmob.getVersionCode() > Integer.valueOf(Device.appVersionCode(RBmob.context))) {
