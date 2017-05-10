@@ -12,6 +12,7 @@ import com.angcyo.library.utils.L;
 import com.angcyo.ofoshare.uiview.MainUIView;
 import com.angcyo.ofoshare.uiview.RegisterUIView;
 import com.angcyo.ofoshare.util.Main;
+import com.angcyo.uiview.Root;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.dialog.UIDialog;
@@ -87,6 +88,7 @@ public class MainActivity extends UILayoutActivity {
         }
 
         isChecking = true;
+        L.e("开始检查更新");
         UpdateBmob.checkUpdate(new UpdateBmob.UpdateListener() {
             @Override
             public void onUpdate(final UpdateBmob bmob) {
@@ -96,7 +98,9 @@ public class MainActivity extends UILayoutActivity {
 //                    return;
 //                }
                 final String fileName = getFileName(bmob.getVersionName());
-                File file = new File(getFolder() + fileName);
+
+                String folder = getFolder();
+                File file = new File(folder + fileName);
 
                 if (file.exists()) {
                     showInstallDialog(bmob, file);
@@ -104,17 +108,20 @@ public class MainActivity extends UILayoutActivity {
                     return;
                 }
 
+                L.e("开始下载:" + bmob.getUrl() + " :" + folder + fileName + ".temp");
+
                 RxDownload.getInstance()
-                        .download(bmob.getUrl(), fileName + ".temp", getFolder())
+                        .download(bmob.getUrl(), fileName + ".temp", folder)
                         .compose(Rx.<DownloadStatus>transformer())
                         .last()
                         .doOnCompleted(new Action0() {
                             @Override
                             public void call() {
-                                File targetFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ofoshare/" + fileName);
+                                File targetFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                                        + "/" + Root.APP_FOLDER + "/" + fileName);
                                 String filePath = targetFile.getAbsolutePath() + ".temp";
                                 final File file = new File(filePath);
-                                //L.e("call() -> " + filePath + " " + file.exists());
+                                L.e("下载完成 -> " + filePath + " " + file.exists());
 
                                 if (file.exists()) {
                                     if (file.renameTo(targetFile)) {
