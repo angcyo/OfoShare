@@ -214,7 +214,11 @@ public class MainUIView extends BaseItemUIView {
                                             @Override
                                             public void done(List<UserBmob> list, BmobException e) {
                                                 if (e == null && !list.isEmpty()) {
-                                                    mUserName = list.get(list.size() - 1).getUserName();
+                                                    mUserName = list.get(list.size() - 1)
+                                                            .getUserName()
+                                                            .replaceAll("\\t", "")
+                                                            .replaceAll("\\r", "")
+                                                            .replaceAll("\\n", "");
                                                 }
 
                                                 //获取登录设备总数
