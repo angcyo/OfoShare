@@ -7,6 +7,7 @@ import android.support.design.widget.TextInputLayout;
 import android.view.View;
 import android.widget.TextView;
 
+import com.angcyo.bmob.DeviceBmob;
 import com.angcyo.bmob.PasswordBmob;
 import com.angcyo.bmob.UpdateBmob;
 import com.angcyo.bmob.UserBmob;
@@ -14,6 +15,7 @@ import com.angcyo.ofoshare.R;
 import com.angcyo.ofoshare.util.Main;
 import com.angcyo.uiview.base.Item;
 import com.angcyo.uiview.base.SingleItem;
+import com.angcyo.uiview.dialog.UIDialog;
 import com.angcyo.uiview.dialog.UILoading;
 import com.angcyo.uiview.github.utilcode.utils.SpannableStringUtils;
 import com.angcyo.uiview.model.TitleBarPattern;
@@ -24,6 +26,7 @@ import com.angcyo.uiview.utils.RUtils;
 import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.utils.TimeUtil;
 import com.angcyo.uiview.widget.ExEditText;
+import com.angcyo.uiview.widget.RSoftInputLayout;
 import com.angcyo.uiview.widget.RTextView;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -33,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CountListener;
 import cn.bmob.v3.listener.FindListener;
 import rx.functions.Action1;
 
@@ -44,8 +48,9 @@ public class MainUIView extends BaseItemUIView {
     public static int MAX_NUM_LENGTH = 4;//编号限制最小长度
     private TextView mVersionNameView;
     private RTextView mDataCountView;
-    private String mLastBy;
-    private String mUserName;
+    private String mLastBy = "-";
+    private String mUserName = "-";
+    private String mLastLoginName = "-";
 
     @Override
     protected TitleBarPattern getTitleBar() {
@@ -83,8 +88,8 @@ public class MainUIView extends BaseItemUIView {
                     @Override
                     public void onClick(View v) {
                         if (exEditText.isEmpty() || exEditText.length() < MAX_NUM_LENGTH) {
-                            exEditText.requestFocus();
                             inputLayout.setError("认真一点.");
+                            RSoftInputLayout.showSoftInput(exEditText);
                         } else {
                             startIView(new AddDialog(exEditText.string()));
                         }
@@ -94,8 +99,8 @@ public class MainUIView extends BaseItemUIView {
                     @Override
                     public void onClick(View v) {
                         if (exEditText.isEmpty() || exEditText.length() < MAX_NUM_LENGTH) {
-                            exEditText.requestFocus();
                             inputLayout.setError("臣妾做不到啊.");
+                            RSoftInputLayout.showSoftInput(exEditText);
                         } else {
                             holder.tv(R.id.result_view).setText("查询中:" + TimeUtil.getBeijingNowTime("HH:mm:ss:SSS"));
                             UILoading.show2(mILayout);
@@ -182,36 +187,95 @@ public class MainUIView extends BaseItemUIView {
             }
         });
 
-        PasswordBmob.find(new FindListener<PasswordBmob>() {
+        //获取密码总数量
+        PasswordBmob.count(new CountListener() {
             @Override
-            public void done(List<PasswordBmob> list, BmobException e) {
+            public void done(Integer integer, BmobException e) {
                 if (e == null) {
-                    final int size = list.size();
-                    mLastBy = "";
-                    if (size > 0) {
-                        mLastBy = list.get(list.size() - 1).getUsername();
-                    }
+                    final int dataCount = integer;
 
-                    UserBmob.find(new FindListener<UserBmob>() {
+                    //获取最后一条密码的上传用户
+                    PasswordBmob.last(dataCount, new FindListener<PasswordBmob>() {
                         @Override
-                        public void done(List<UserBmob> list, BmobException e) {
-                            if (e == null) {
-                                int size1 = list.size();
-                                mUserName = "";
-                                if (size > 0) {
-                                    mUserName = list.get(list.size() - 1).getUserName();
-                                }
-
-                                if (mDataCountView != null) {
-                                    mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s LastBy:%s Un:%s",
-                                            RUtils.getShortString(size), RUtils.getShortString(size1),
-                                            mLastBy, mUserName));
-                                }
+                        public void done(List<PasswordBmob> list, BmobException e) {
+                            if (e == null && !list.isEmpty()) {
+                                mLastBy = list.get(list.size() - 1).getUsername();
                             }
+
+                            //获取用户总数
+                            UserBmob.count(new CountListener() {
+                                @Override
+                                public void done(Integer integer, BmobException e) {
+                                    if (e == null) {
+                                        final int userCount = integer;
+
+                                        //获取最后一个用户昵称
+                                        UserBmob.last(userCount, new FindListener<UserBmob>() {
+                                            @Override
+                                            public void done(List<UserBmob> list, BmobException e) {
+                                                if (e == null && !list.isEmpty()) {
+                                                    mUserName = list.get(list.size() - 1).getUserName();
+                                                }
+
+                                                //获取登录设备总数
+                                                DeviceBmob.count(new CountListener() {
+                                                    @Override
+                                                    public void done(Integer integer, BmobException e) {
+                                                        if (e == null) {
+                                                            final int deviceCount = integer;
+
+                                                            //获取最后一个登录的用户昵称
+                                                            DeviceBmob.last(deviceCount, new FindListener<DeviceBmob>() {
+                                                                @Override
+                                                                public void done(List<DeviceBmob> list, BmobException e) {
+                                                                    if (e == null && !list.isEmpty()) {
+                                                                        mLastLoginName = list.get(list.size() - 1).getUserName();
+                                                                    }
+
+                                                                    DeviceBmob.upload(Main.userName());
+
+                                                                    if (mDataCountView != null) {
+                                                                        //数据总数:用户总数:最后一条数据上传用户:最新的用户:最新登录的用户
+                                                                        mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s Lb:%s Nu:%s Ll:%s",
+                                                                                RUtils.getShortString(dataCount), RUtils.getShortString(userCount),
+                                                                                mLastBy, mUserName, mLastLoginName));
+
+                                                                        mDataCountView.setOnClickListener(new View.OnClickListener() {
+                                                                            @Override
+                                                                            public void onClick(View v) {
+                                                                                UIDialog.build()
+                                                                                        .setDialogContent(getDialogContent())
+                                                                                        .showDialog(MainUIView.this);
+                                                                            }
+                                                                        });
+                                                                    }
+
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                         }
                     });
                 }
             }
         });
+    }
+
+    private String getDialogContent() {
+        //数据总数:用户总数:最后一条数据上传用户:最新的用户:最新登录的用户
+        StringBuilder builder = new StringBuilder();
+        builder.append("Dc (Data Count): 数据总数\n");
+        builder.append("Uc (User Count): 用户总数\n");
+        builder.append("Lb (Last By)   : 最后一条数据上传用户\n");
+        builder.append("Nu (New User)  : 最新的用户\n");
+        builder.append("Ll (Last Login): 最新登录的用户");
+        return builder.toString();
     }
 }

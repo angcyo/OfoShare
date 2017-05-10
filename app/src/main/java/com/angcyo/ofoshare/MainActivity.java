@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.angcyo.bmob.DeviceBmob;
 import com.angcyo.bmob.UpdateBmob;
 import com.angcyo.library.utils.L;
 import com.angcyo.ofoshare.uiview.MainUIView;
@@ -66,7 +65,7 @@ public class MainActivity extends UILayoutActivity {
         SkinHelper.setSkin(new MainSkin(this));
 
         if (Main.isRegister()) {
-            DeviceBmob.upload(Main.userName());
+            //DeviceBmob.upload(Main.userName());
             mLayout.replaceIView(new MainUIView(), new UIParam(false));
 //            mLayout.replaceIView(new RegisterUIView(), new UIParam(false));
         } else {

@@ -15,6 +15,7 @@ import com.angcyo.uiview.dialog.UILoading;
 import com.angcyo.uiview.skin.SkinHelper;
 import com.angcyo.uiview.utils.T_;
 import com.angcyo.uiview.widget.ExEditText;
+import com.angcyo.uiview.widget.RSoftInputLayout;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -59,13 +60,15 @@ public class AddDialog extends UIIDialogImpl {
         //exEditText.setHint(hint);
         inputLayout.setHint(hint);
 
+        RSoftInputLayout.showSoftInput(exEditText);
+
         mViewHolder.v(R.id.save_view).setBackground(SkinHelper.getSkin().getThemeMaskBackgroundRoundSelector(Color.RED));
         mViewHolder.v(R.id.save_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (exEditText.isEmpty() || exEditText.length() < 4) {
-                    exEditText.requestFocus();
                     inputLayout.setError("这是哪个国家的密码?");
+                    exEditText.requestFocus();
                 } else {
                     UILoading.show2(mILayout);
                     PasswordBmob.upload(new PasswordBmob(exEditText.string(), number, Main.userName()), new SaveListener<String>() {

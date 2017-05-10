@@ -3,7 +3,9 @@ package com.angcyo.bmob;
 import com.angcyo.uiview.utils.Device;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CountListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -45,8 +47,26 @@ public class DeviceBmob extends BmobObject {
         });
     }
 
+    /**
+     * 返回对象数量
+     */
+    public static void count(CountListener countListener) {
+        BmobQuery<DeviceBmob> query = new BmobQuery<>();
+        query.count(DeviceBmob.class, countListener);
+    }
+
+    public static void last(int sum, final cn.bmob.v3.listener.FindListener<DeviceBmob> listener) {
+        BmobQuery<DeviceBmob> query = new BmobQuery<>();
+        query.setSkip(sum - 1);
+        query.findObjects(listener);
+    }
+
     public DeviceBmob setUserName(String userName) {
         this.userName = userName;
         return this;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

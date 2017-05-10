@@ -5,6 +5,7 @@ import android.view.animation.Animation;
 
 import com.angcyo.bmob.UserBmob;
 import com.angcyo.library.utils.L;
+import com.angcyo.ofoshare.BuildConfig;
 import com.angcyo.ofoshare.R;
 import com.angcyo.uiview.base.Item;
 import com.angcyo.uiview.base.SingleItem;
@@ -50,8 +51,8 @@ public class AboutUIView extends UIItemUIView<SingleItem> {
         super.onViewCreate(rootView);
         mBaseRootLayout.setEnableClip(true);
 
-        if (users == null) {
-            UserBmob.find(new FindListener<UserBmob>() {
+        if (users == null || BuildConfig.DEBUG) {
+            UserBmob.findLast(new FindListener<UserBmob>() {
                 @Override
                 public void done(List<UserBmob> list, BmobException e) {
                     if (e == null) {
