@@ -1,6 +1,9 @@
 package com.angcyo.ofoshare;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -12,18 +15,24 @@ import com.angcyo.library.utils.L;
 import com.angcyo.ofoshare.uiview.MainUIView;
 import com.angcyo.ofoshare.uiview.RegisterUIView;
 import com.angcyo.ofoshare.util.Main;
+import com.angcyo.uiview.RCrashHandler;
 import com.angcyo.uiview.Root;
 import com.angcyo.uiview.base.UILayoutActivity;
 import com.angcyo.uiview.container.UIParam;
 import com.angcyo.uiview.dialog.UIDialog;
 import com.angcyo.uiview.github.utilcode.utils.AppUtils;
+import com.angcyo.uiview.github.utilcode.utils.ClipboardUtils;
+import com.angcyo.uiview.github.utilcode.utils.CmdUtil;
+import com.angcyo.uiview.github.utilcode.utils.FileUtils;
 import com.angcyo.uiview.github.utilcode.utils.NetworkUtils;
 import com.angcyo.uiview.net.Rx;
 import com.angcyo.uiview.receiver.NetworkStateReceiver;
 import com.angcyo.uiview.skin.SkinHelper;
+import com.angcyo.uiview.utils.T_;
 import com.hwangjr.rxbus.RxBus;
 import com.hwangjr.rxbus.annotation.Subscribe;
 import com.hwangjr.rxbus.annotation.Tag;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
 
@@ -74,6 +83,8 @@ public class MainActivity extends UILayoutActivity {
         }
 
         checkUpdate();
+
+        checkCrash();
     }
 
     private void checkUpdate() {
@@ -187,5 +198,60 @@ public class MainActivity extends UILayoutActivity {
                 })
                 .setCanCancel(bmob.getForce() != 1)
                 .showDialog(mLayout);
+    }
+
+    private void checkCrash() {
+        if (Hawk.get(RCrashHandler.KEY_IS_CRASH, false)) {
+            //异常退出了
+            UIDialog.build()
+                    .setDialogTitle("发生了什么啊^_^")
+                    .setDialogContent(Hawk.get(RCrashHandler.KEY_CRASH_MESSAGE, "-"))
+                    .setOkText("粘贴给作者?")
+                    .setCancelText("加入QQ群")
+                    .setCancelListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            joinQQGroup("TO1ybOZnKQHSLcUlwsVfOt6KQMGLmuAW");
+                        }
+                    })
+                    .setOkListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                ClipboardUtils.copyText(FileUtils.readFile2String(Hawk.get(RCrashHandler.KEY_CRASH_FILE, "-"), "utf8"));
+
+                                String qq = "664738095";
+                                if (CmdUtil.checkApkExist(MainActivity.this, "com.tencent.mobileqq")) {
+                                    String url = "mqqwpa://im/chat?chat_type=wpa&uin=" + qq;
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                } else {
+                                    T_.error("您没有安装腾讯QQ");
+                                }
+                            } catch (ActivityNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    })
+                    .showDialog(mLayout);
+        }
+
+        Hawk.put(RCrashHandler.KEY_IS_CRASH, false);
+    }
+
+    public boolean joinQQGroup(String key) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26k%3D" + key));
+        // 此Flag可根据具体产品需要自定义，如设置，则在加群界面按返回，返回手Q主界面，不设置，按返回会返回到呼起产品界面    //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            startActivity(intent);
+            return true;
+        } catch (Exception e) {
+            // 未安装手Q或安装的版本不支持
+            T_.error("您没有安装腾讯QQ");
+            return false;
+        }
     }
 }

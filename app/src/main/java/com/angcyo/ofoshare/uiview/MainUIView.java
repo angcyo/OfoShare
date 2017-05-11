@@ -51,6 +51,8 @@ public class MainUIView extends BaseItemUIView {
     private String mLastBy = "-";
     private String mUserName = "-";
     private String mLastLoginName = "-";
+    private int mDataCount = 0;
+    private int mUserCount = 0;
 
     @Override
     protected TitleBarPattern getTitleBar() {
@@ -161,6 +163,7 @@ public class MainUIView extends BaseItemUIView {
                     @Override
                     public void onClick(View v) {
                         startIView(new AboutUIView(v));
+                        //holder.v(R.id.base_toast_text_view).setOnClickListener(null);
                     }
                 });
             }
@@ -192,84 +195,79 @@ public class MainUIView extends BaseItemUIView {
             @Override
             public void done(Integer integer, BmobException e) {
                 if (e == null) {
-                    final int dataCount = integer;
-
-                    //获取最后一条密码的上传用户
-                    PasswordBmob.last(dataCount, new FindListener<PasswordBmob>() {
-                        @Override
-                        public void done(List<PasswordBmob> list, BmobException e) {
-                            if (e == null && !list.isEmpty()) {
-                                mLastBy = list.get(list.size() - 1).getUsername();
-                            }
-
-                            //获取用户总数
-                            UserBmob.count(new CountListener() {
-                                @Override
-                                public void done(Integer integer, BmobException e) {
-                                    if (e == null) {
-                                        final int userCount = integer;
-
-                                        //获取最后一个用户昵称
-                                        UserBmob.last(userCount, new FindListener<UserBmob>() {
-                                            @Override
-                                            public void done(List<UserBmob> list, BmobException e) {
-                                                if (e == null && !list.isEmpty()) {
-                                                    mUserName = list.get(list.size() - 1)
-                                                            .getUserName()
-                                                            .replaceAll("\\t", "")
-                                                            .replaceAll("\\r", "")
-                                                            .replaceAll("\\n", "");
-                                                }
-
-                                                //获取登录设备总数
-                                                DeviceBmob.count(new CountListener() {
-                                                    @Override
-                                                    public void done(Integer integer, BmobException e) {
-                                                        if (e == null) {
-                                                            final int deviceCount = integer;
-
-                                                            //获取最后一个登录的用户昵称
-                                                            DeviceBmob.last(deviceCount, new FindListener<DeviceBmob>() {
-                                                                @Override
-                                                                public void done(List<DeviceBmob> list, BmobException e) {
-                                                                    if (e == null && !list.isEmpty()) {
-                                                                        mLastLoginName = list.get(list.size() - 1).getUserName();
-                                                                    }
-
-                                                                    DeviceBmob.upload(Main.userName());
-
-                                                                    if (mDataCountView != null) {
-                                                                        //数据总数:用户总数:最后一条数据上传用户:最新的用户:最新登录的用户
-                                                                        mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s Lb:%s Nu:%s Ll:%s",
-                                                                                RUtils.getShortString(dataCount), RUtils.getShortString(userCount),
-                                                                                mLastBy, mUserName, mLastLoginName));
-
-                                                                        mDataCountView.setOnClickListener(new View.OnClickListener() {
-                                                                            @Override
-                                                                            public void onClick(View v) {
-                                                                                UIDialog.build()
-                                                                                        .setDialogContent(getDialogContent())
-                                                                                        .showDialog(MainUIView.this);
-                                                                            }
-                                                                        });
-                                                                    }
-
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                });
-
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    });
+                    mDataCount = integer;
                 }
+                resetTipDataView();
             }
         });
+
+        //获取最后一条密码的上传用户
+        PasswordBmob.last(new FindListener<PasswordBmob>() {
+            @Override
+            public void done(List<PasswordBmob> list, BmobException e) {
+                if (e == null && !list.isEmpty()) {
+                    mLastBy = list.get(0).getUsername();
+                }
+                resetTipDataView();
+            }
+        });
+
+        //获取用户总数
+        UserBmob.count(new CountListener() {
+            @Override
+            public void done(Integer integer, BmobException e) {
+                if (e == null) {
+                    mUserCount = integer;
+                }
+                resetTipDataView();
+            }
+        });
+
+        //获取最后一个用户昵称
+        UserBmob.last(new FindListener<UserBmob>() {
+            @Override
+            public void done(List<UserBmob> list, BmobException e) {
+                if (e == null && !list.isEmpty()) {
+                    mUserName = list.get(0)
+                            .getUserName()
+                            .replaceAll("\\t", "")
+                            .replaceAll("\\r", "")
+                            .replaceAll("\\n", "");
+                }
+                resetTipDataView();
+            }
+        });
+
+        //获取最后一个登录的用户昵称
+        DeviceBmob.last(new FindListener<DeviceBmob>() {
+            @Override
+            public void done(List<DeviceBmob> list, BmobException e) {
+                if (e == null && !list.isEmpty()) {
+                    mLastLoginName = list.get(0).getUserName();
+                }
+
+                DeviceBmob.upload(Main.userName());
+                resetTipDataView();
+            }
+        });
+    }
+
+    private void resetTipDataView() {
+        if (mDataCountView != null) {
+            //数据总数:用户总数:最后一条数据上传用户:最新的用户:最新登录的用户
+            mDataCountView.setText(String.format(Locale.CHINA, "Dc:%s Uc:%s Lb:%s Nu:%s Ll:%s",
+                    RUtils.getShortString(mDataCount), RUtils.getShortString(mUserCount),
+                    mLastBy, mUserName, mLastLoginName));
+
+            mDataCountView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UIDialog.build()
+                            .setDialogContent(getDialogContent())
+                            .showDialog(MainUIView.this);
+                }
+            });
+        }
     }
 
     private String getDialogContent() {

@@ -61,12 +61,18 @@ public class DeviceBmob extends BmobObject {
         query.findObjects(listener);
     }
 
-    public DeviceBmob setUserName(String userName) {
-        this.userName = userName;
-        return this;
+    public static void last(final cn.bmob.v3.listener.FindListener<DeviceBmob> listener) {
+        BmobQuery<DeviceBmob> query = new BmobQuery<>();
+        query.order("-createdAt");//-表示逆序
+        query.findObjects(listener);
     }
 
     public String getUserName() {
         return userName;
+    }
+
+    public DeviceBmob setUserName(String userName) {
+        this.userName = userName;
+        return this;
     }
 }
