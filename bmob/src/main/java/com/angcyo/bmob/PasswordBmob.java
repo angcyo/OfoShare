@@ -85,6 +85,7 @@ public class PasswordBmob extends BmobObject {
     public static void last(final cn.bmob.v3.listener.FindListener<PasswordBmob> listener) {
         BmobQuery<PasswordBmob> query = new BmobQuery<>();
         query.order("-createdAt");//-表示逆序
+        query.setLimit(1);
         query.findObjects(listener);
     }
 

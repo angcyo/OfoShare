@@ -44,6 +44,7 @@ public class UpdateBmob extends BmobObject {
     public static void checkUpdate(final UpdateListener listener) {
         BmobQuery<UpdateBmob> query = new BmobQuery<>();
         query.order("-createdAt");//-表示逆序
+        query.setLimit(1);
         query.findObjects(new FindListener<UpdateBmob>() {
             @Override
             public void done(List<UpdateBmob> list, BmobException e) {
