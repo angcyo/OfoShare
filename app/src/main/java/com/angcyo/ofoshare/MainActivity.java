@@ -71,7 +71,7 @@ public class MainActivity extends UILayoutActivity {
     }
 
     @Override
-    protected void onLoadView() {
+    protected void onLoadView(Intent intent) {
         SkinHelper.setSkin(new MainSkin(this));
 
         if (Main.isRegister()) {

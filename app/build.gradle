@@ -68,6 +68,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':RLibrary:uiview')
     compile project(':bmob')
-    compile project(':RLibrary:zxing')
+//    compile project(':RLibrary:zxing')
     compile project(':RLibrary:rcode')
+
+    compile 'zlc.season:rxdownload:1.2.8'
 }

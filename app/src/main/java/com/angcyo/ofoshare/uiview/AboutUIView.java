@@ -94,13 +94,14 @@ public class AboutUIView extends UIItemUIView<SingleItem> {
     }
 
     @Override
-    protected void onTitleBackListener() {
+    protected boolean onTitleBackListener() {
         mBaseRootLayout.startExitClip(new ClipHelper.OnEndListener() {
             @Override
             public void onEnd() {
-                AboutUIView.super.onTitleBackListener();
+                backPressed();
             }
         });
+        return false;
     }
 
     @Override

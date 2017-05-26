@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <cn.bingoogolapple.qrcode.zxing.ZXingView
+    <!--<cn.bingoogolapple.qrcode.zxing.ZXingView
         android:id="@+id/zxing_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,7 +35,7 @@
         app:qrcv_tipTextSize="@dimen/default_text_size"
         app:qrcv_toolbarHeight="@dimen/title_bar_height"
         app:qrcv_topOffset="@dimen/base_120dpi"/>
-
+-->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,11 +43,11 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/base_40dpi">
 
-        <com.angcyo.uiview.widget.RImageCheckView
-            android:id="@+id/light_switch_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/zx_light_switch_selector"/>
+        <!--<com.angcyo.uiview.widget.RImageCheckView-->
+            <!--android:id="@+id/light_switch_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/zx_light_switch_selector"/>-->
 
         <!--<android.support.v4.widget.Space-->
             <!--android:layout_width="@dimen/base_120dpi"-->
